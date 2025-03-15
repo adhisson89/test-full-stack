@@ -1,7 +1,8 @@
-package com.adhissoncedeno.backend.graphql;
+package com.adhissoncedeno.backend.model.dtos.request;
 
-public class InputPost {
 
+
+public class PostRequestDTO {
     private String title;
     private String content;
     private boolean isPublic;

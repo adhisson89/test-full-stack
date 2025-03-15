@@ -1,51 +1,38 @@
-type User {
-    id: ID!
-    username: String!
-    password: String!
-    role: Role!
-    posts: [Post]
-}
-
-type Post {
-    id: ID!
-    title: String!
-    content: String!
-    user_id: ID!
-}
-
-enum Role {
-    ADMIN
-    USER
-}
-
 type Query {
-    #Usuarios
-    findUserById(id: ID!): User
-    findAllUsers: [User]
-    #Posts
-    findAllPostsByUserId(id: ID!): [Post]
-    findAllPosts: [Post]
-}
-
-
-input inputUser {
-    username: String!
-    password: String!
-    role: Role!
-}
-
-input inputPost {
-    title: String!
-    content: String!
-    user_id: ID
-    public: Boolean!
+    findAllPostsByUserId(id: ID!): [PostResponse]
+    findAllPosts: [PostResponse]
 }
 
 type Mutation {
-    #Usuarios
-    createUser(inputUser: inputUser): String,
-    deleteUserById(id: ID!): String
-    #Posts
-    createPost(inputPost: inputPost): String
+    createPost(postRequest: PostRequestInput): PostResponse
     deletePostById(id: ID!): String
+    createUser(userRequest: UserRequestInput): UserResponse
+    deleteUserById(id: ID!): String
+}
+
+input PostRequestInput {
+    title: String!
+    content: String!
+    public: Boolean!
+    userId: ID
+}
+
+type PostResponse {
+    id: ID!
+    title: String!
+    content: String!
+    isPublic: Boolean!
+    userId: ID
+}
+
+input UserRequestInput {
+    username: String!
+    password: String!
+    role: String!
+}
+
+type UserResponse {
+    id: ID!
+    username: String!
+    role: String!
 }
