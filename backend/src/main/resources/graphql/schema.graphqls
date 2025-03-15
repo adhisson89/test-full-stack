@@ -1,0 +1,51 @@
+type User {
+    id: ID!
+    username: String!
+    password: String!
+    role: Role!
+    posts: [Post]
+}
+
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    user_id: ID!
+}
+
+enum Role {
+    ADMIN
+    USER
+}
+
+type Query {
+    #Usuarios
+    findUserById(id: ID!): User
+    findAllUsers: [User]
+    #Posts
+    findAllPostsByUserId(id: ID!): [Post]
+    findAllPosts: [Post]
+}
+
+
+input inputUser {
+    username: String!
+    password: String!
+    role: Role!
+}
+
+input inputPost {
+    title: String!
+    content: String!
+    user_id: ID
+    public: Boolean!
+}
+
+type Mutation {
+    #Usuarios
+    createUser(inputUser: inputUser): String,
+    deleteUserById(id: ID!): String
+    #Posts
+    createPost(inputPost: inputPost): String
+    deletePostById(id: ID!): String
+}
