@@ -7,6 +7,15 @@ public class PostRequestDTO {
     private String content;
     private boolean isPublic;
     private Long userId;
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

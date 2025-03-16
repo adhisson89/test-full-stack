@@ -8,6 +8,10 @@ import com.adhissoncedeno.backend.model.entities.Post;
 import com.adhissoncedeno.backend.model.entities.User;
 import com.adhissoncedeno.backend.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,7 +64,43 @@ public class PostService {
     }
 
     public void deleteById(Long id) {
-        postRepository.deleteById(id);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        boolean isOwner = post.getUser().getId().equals(getUserIdFromAuthentication(authentication));
+
+        if (isAdmin || isOwner) {
+            postRepository.deleteById(id);
+        } else {
+            throw new AccessDeniedException("You don't have permission to delete this post");
+        }
     }
+
+
+    public PostResponseDTO update(PostRequestDTO postRequestDTO) {
+        Post post = postRepository.findById(postRequestDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        boolean isOwner = post.getUser().getId().equals(getUserIdFromAuthentication(authentication));
+
+        if (isAdmin || isOwner) {
+            post.setTitle(postRequestDTO.getTitle());
+            post.setContent(postRequestDTO.getContent());
+            post.setPublic(postRequestDTO.isPublic());
+            return postMapper.toDto(postRepository.save(post));
+        } else {
+            throw new AccessDeniedException("You don't have permission to update this post");
+        }
+    }
+
+    private Long getUserIdFromAuthentication(Authentication authentication) {
+        return Long.parseLong(authentication.getName());
+    }
+
+
 
 }

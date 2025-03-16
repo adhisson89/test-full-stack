@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class PostController {
         return postService.findAll();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @MutationMapping(name = "createPost")
     public PostResponseDTO createPost(@Argument PostRequestDTO postRequest) {
         return postService.save(postRequest);
@@ -37,4 +39,16 @@ public class PostController {
         postService.deleteById(id);
         return "Post deleted";
     }
+
+    @MutationMapping(name = "updatePostById")
+    public PostResponseDTO updatePost(@Argument PostRequestDTO postRequest) {
+        return postService.update(postRequest);
+    }
+
+    //findPublicPosts
+    @QueryMapping(name = "findPublicPosts")
+    public List<PostResponseDTO> findPublicPosts() {
+        return postService.findPublicPosts();
+    }
+
 }
