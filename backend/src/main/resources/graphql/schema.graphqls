@@ -1,9 +1,9 @@
 type Query {
-    findAllPostsByUserId(id: ID!): [PostResponse]
     findAllPosts: [PostResponse]
     findPublicPosts: [PostResponse]
     findUserById(id: ID!): UserResponse
     findAllUsers: [UserResponse]
+    myPosts: [PostResponse]
 }
 
 type Mutation {
