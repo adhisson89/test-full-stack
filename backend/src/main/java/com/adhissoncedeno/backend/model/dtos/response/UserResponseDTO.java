@@ -1,10 +1,12 @@
 package com.adhissoncedeno.backend.model.dtos.response;
 
 
+import com.adhissoncedeno.backend.model.enums.Role;
+
 public class UserResponseDTO {
     private Long id;
     private String username;
-    private String role;
+    private Role role;
 
     public Long getId() {
         return id;
@@ -22,11 +24,11 @@ public class UserResponseDTO {
         this.username = username;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

@@ -1,16 +1,18 @@
 package com.adhissoncedeno.backend.model.dtos.request;
 
+import com.adhissoncedeno.backend.model.enums.Role;
+
 public class UserRequestDTO {
     private String username;
     private String password;
-    private String role;
+    private Role role;
 
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

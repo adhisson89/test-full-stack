@@ -6,6 +6,7 @@ import com.adhissoncedeno.backend.model.dtos.response.UserResponseDTO;
 import com.adhissoncedeno.backend.model.entities.User;
 import com.adhissoncedeno.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,12 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserResponseDTO create(UserRequestDTO userRequestDTO) {
         User user = userMapper.toEntity(userRequestDTO);
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         return userMapper.toDto(userRepository.save(user));
     }
 

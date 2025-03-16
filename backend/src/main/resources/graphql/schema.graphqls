@@ -1,13 +1,23 @@
 type Query {
     findAllPostsByUserId(id: ID!): [PostResponse]
     findAllPosts: [PostResponse]
+    findPublicPosts: [PostResponse]
+    findUserById(id: ID!): UserResponse
+    findAllUsers: [UserResponse]
 }
 
 type Mutation {
+    login(username: String!, password: String!): AuthResponse
+    refreshToken(refreshToken: String!): AuthResponse
     createPost(postRequest: PostRequestInput): PostResponse
     deletePostById(id: ID!): String
     createUser(userRequest: UserRequestInput): UserResponse
     deleteUserById(id: ID!): String
+}
+
+type AuthResponse {
+    token: String!
+    refreshToken: String!
 }
 
 input PostRequestInput {
@@ -28,11 +38,16 @@ type PostResponse {
 input UserRequestInput {
     username: String!
     password: String!
-    role: String!
+    role: Role
 }
 
 type UserResponse {
     id: ID!
     username: String!
-    role: String!
+    role: Role
+}
+
+enum Role {
+    ADMIN
+    USER
 }

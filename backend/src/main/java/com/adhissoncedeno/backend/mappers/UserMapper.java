@@ -12,6 +12,7 @@ public class UserMapper {
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
+        user.setRole(dto.getRole());
         return user;
     }
 
@@ -19,7 +20,7 @@ public class UserMapper {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        dto.setRole(user.getRole().name());
+        dto.setRole(user.getRole());
         return dto;
     }
 }
