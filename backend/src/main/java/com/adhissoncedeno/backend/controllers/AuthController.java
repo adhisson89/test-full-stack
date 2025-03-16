@@ -2,57 +2,43 @@ package com.adhissoncedeno.backend.controllers;
 
 import com.adhissoncedeno.backend.model.dtos.request.AuthRequestDTO;
 import com.adhissoncedeno.backend.model.dtos.response.AuthResponseDTO;
+import com.adhissoncedeno.backend.services.AuthService;
 import com.adhissoncedeno.backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/auth")
+@Controller
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private AuthService authService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+    @MutationMapping
+    public AuthResponseDTO login(@Argument String username, @Argument String password) {
+        AuthRequestDTO request = new AuthRequestDTO();
+        request.setUsername(username);
+        request.setPassword(password);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        String token = jwtTokenUtil.generateToken(userDetails);
-        String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
-
-        return ResponseEntity.ok(new AuthResponseDTO(token, refreshToken));
+        return authService.login(request);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthResponseDTO> refreshToken(@RequestBody String refreshToken) {
+    @MutationMapping
+    public AuthResponseDTO refreshToken(@Argument String refreshToken) {
         try {
             String username = jwtTokenUtil.extractUsername(refreshToken);
             UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            if (jwtTokenUtil.validateToken(refreshToken, userDetails)) {
-                String newToken = jwtTokenUtil.generateToken(userDetails);
-                String newRefreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
-
-                return ResponseEntity.ok(new AuthResponseDTO(newToken, newRefreshToken));
-            }
-
-            return ResponseEntity.badRequest().body(new AuthResponseDTO(null, null));
+            return authService.refreshToken(refreshToken, userDetails);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new AuthResponseDTO(null, null));
+            return new AuthResponseDTO(null, null);
         }
     }
 }
