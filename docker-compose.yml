@@ -1,0 +1,59 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: 
+      always
+    networks:
+      test-fullstack-network:
+        ipv4_address: 172.20.0.4
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      test-fullstack-network:
+        ipv4_address: 172.20.0.3
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: 
+      always
+
+  database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=#PassSQL#
+      - MSSQL_PID=Developer
+    ports:
+      - "1434:1433"
+    restart: 
+      always
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "if [ -x /opt/mssql-tools/bin/sqlcmd ] ; then /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '#PassSQL#' -Q 'SELECT 1' || exit 1 ; else /bin/bash -c 'cat < /dev/null > /dev/tcp/localhost/1433' || exit 1 ; fi"]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      timeout: 3s
+    networks:
+      test-fullstack-network:
+        ipv4_address: 172.20.0.2
+    volumes:
+      - db-data:/var/opt/mssql
+
+
+networks:
+  test-fullstack-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+
+volumes:
+  db-data:
