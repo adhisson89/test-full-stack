@@ -60,9 +60,14 @@ docker-compose down -v
 
 ## Detalles técnicos
 - Frontend: Angular que se ejecuta en Nginx
-- Backend: API RESTful desarrollada en Spring Boot
+- Backend: API con GraphQL desarrollada en Spring Boot
 - Base de datos: SQL Server 2022
 - Red: Todos los servicios están en una red dedicada con IPs estáticas
+
+## Documentación de la API
+La API cuenta con documentación generada automáticamente con GraphiQL.
+Para probar la documentación, visita:
+- http://localhost:3000/graphiql para GraphiQL
 
 ## Notas adicionales
 - La base de datos está configurada con un healthcheck para asegurar que esté lista antes de iniciar el backend
