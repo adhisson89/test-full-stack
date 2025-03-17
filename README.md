@@ -14,7 +14,7 @@ El proyecto está estructurado de la siguiente manera:
 ```
 .
 ├── frontend/        # Aplicación Angular
-├── backend/         # API REST con Spring Boot
+├── backend/         # API con Spring Boot
 └── docker-compose.yml  # Configuración de Docker Compose
 ```
 
