@@ -3,6 +3,7 @@ package com.adhissoncedeno.backend.controllers;
 import com.adhissoncedeno.backend.model.dtos.request.AuthRequestDTO;
 import com.adhissoncedeno.backend.model.dtos.response.AuthResponseDTO;
 import com.adhissoncedeno.backend.services.AuthService;
+import com.adhissoncedeno.backend.services.CustomUserDetailsService;
 import com.adhissoncedeno.backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -33,11 +34,12 @@ public class AuthController {
     public AuthResponseDTO refreshToken(@Argument String refreshToken) {
         try {
             String username = jwtTokenUtil.extractUsername(refreshToken);
-            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UserDetails userDetails = ((CustomUserDetailsService) authService.getUserDetailsService())
+                    .loadUserByUsername(username);
 
             return authService.refreshToken(refreshToken, userDetails);
         } catch (Exception e) {
-            return new AuthResponseDTO(null, null);
+            throw new RuntimeException("Invalid refresh token", e);
         }
     }
 }

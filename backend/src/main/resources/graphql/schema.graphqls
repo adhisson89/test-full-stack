@@ -1,57 +1,216 @@
+"""
+Consultas para recuperar información del sistema.
+"""
 type Query {
+    """
+    Recupera todos los posts existentes en el sistema.
+    Solo disponible para usuarios autenticados con rol adecuado.
+    """
     findAllPosts: [PostResponse]
+
+    """
+    Recupera solo los posts marcados como públicos.
+    Disponible para todos los usuarios.
+    """
     findPublicPosts: [PostResponse]
+
+    """
+    Busca un usuario por su ID.
+    Solo disponible para administradores.
+    """
     findUserById(id: ID!): UserResponse
+
+    """
+    Recupera todos los usuarios registrados en el sistema.
+    Solo disponible para administradores.
+    """
     findAllUsers: [UserResponse]
+
+    """
+    Recupera todos los posts pertenecientes al usuario autenticado actualmente.
+    Requiere autenticación.
+    """
     myPosts: [PostResponse]
+
+    """
+    Busca un post específico por su ID.
+    """
     findPostById(id: ID!): PostResponse
 }
 
+"""
+Mutaciones para modificar datos en el sistema.
+"""
 type Mutation {
+    """
+    Autentica a un usuario y devuelve tokens de acceso y refresco.
+    """
     login(username: String!, password: String!): AuthResponse
+
+    """
+    Renueva un token de acceso utilizando un token de refresco.
+    """
     refreshToken(refreshToken: String!): AuthResponse
+
+    """
+    Crea un nuevo post en el sistema.
+    Requiere autenticación y rol de usuario.
+    """
     createPost(postRequest: PostRequestInput): PostResponse
+
+    """
+    Elimina un post por su ID.
+    """
     deletePostById(id: ID!): String
+
+    """
+    Crea un nuevo usuario en el sistema.
+    """
     createUser(userRequest: UserRequestInput): UserResponse
+
+    """
+    Elimina un usuario por su ID.
+    Solo disponible para administradores.
+    """
     deleteUserById(id: ID!): String
+
+    """
+    Actualiza un post existente por su ID.
+    """
     updatePostById(postRequest: PostRequestInput): PostResponse
 }
 
+"""
+Respuesta de autenticación con tokens para acceso y refresco.
+"""
 type AuthResponse {
+    """
+    Token JWT para autenticar peticiones (tiempo limitado).
+    """
     token: String!
+
+    """
+    Token para obtener un nuevo token de acceso sin necesidad de credenciales.
+    """
     refreshToken: String!
 }
 
+"""
+Datos de entrada para crear o actualizar un post.
+"""
 input PostRequestInput {
+    """
+    Título del post.
+    """
     title: String!
+
+    """
+    Contenido completo del post.
+    """
     content: String!
+
+    """
+    Indica si el post es público o privado.
+    """
     public: Boolean!
+
+    """
+    ID del usuario propietario del post.
+    """
     userId: ID
+
+    """
+    ID del post (solo necesario para actualizaciones).
+    """
     id: ID
 }
 
+"""
+Datos de respuesta de un post.
+"""
 type PostResponse {
+    """
+    Identificador único del post.
+    """
     id: ID!
+
+    """
+    Título del post.
+    """
     title: String!
+
+    """
+    Contenido completo del post.
+    """
     content: String!
+
+    """
+    Indica si el post es público o privado.
+    """
     isPublic: Boolean!
+
+    """
+    ID del usuario que creó el post.
+    """
     userId: ID
 }
 
+"""
+Datos de entrada para crear o actualizar un usuario.
+"""
 input UserRequestInput {
+    """
+    Nombre de usuario, debe ser único en el sistema.
+    """
     username: String!
+
+    """
+    Contraseña del usuario (se almacenará encriptada).
+    """
     password: String!
+
+    """
+    Rol del usuario (ADMIN o USER). Por defecto USER si no se especifica.
+    """
     role: Role
+
+    """
+    ID del usuario (solo necesario para actualizaciones).
+    """
     id: ID
 }
 
+"""
+Datos de respuesta de un usuario.
+"""
 type UserResponse {
+    """
+    Identificador único del usuario.
+    """
     id: ID!
+
+    """
+    Nombre de usuario.
+    """
     username: String!
+
+    """
+    Rol asignado al usuario.
+    """
     role: Role
 }
 
+"""
+Roles disponibles para los usuarios en el sistema.
+"""
 enum Role {
+    """
+    Rol de administrador con acceso completo.
+    """
     ADMIN
+
+    """
+    Rol de usuario estándar con acceso limitado.
+    """
     USER
 }
