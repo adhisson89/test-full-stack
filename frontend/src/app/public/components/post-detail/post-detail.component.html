@@ -1,1 +1,13 @@
-<p>post-detail works!</p>
+<div class="post-detail-container">
+  <button class="back-button" routerLink="/public">← Back to Posts</button>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="post-content" *ngIf="!loading && !error && post">
+    <h1>{{ post.title }}</h1>
+    <div class="content">
+      {{ post.content }}
+    </div>
+  </div>
+</div>

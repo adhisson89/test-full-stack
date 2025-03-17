@@ -6,10 +6,10 @@ import {provideHttpClient} from '@angular/common/http';
 import {Apollo} from 'apollo-angular';
 
 export const appConfig: ApplicationConfig = {
-    providers: [
-        provideRouter(routes, withComponentInputBinding()),
-        provideHttpClient(),
-        importProvidersFrom(GraphQLModule),
-        Apollo
-    ]
+  providers: [
+    provideRouter(routes, withComponentInputBinding()),
+    provideHttpClient(),
+    importProvidersFrom(GraphQLModule),
+    Apollo
+  ]
 };

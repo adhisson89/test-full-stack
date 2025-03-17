@@ -1,1 +1,75 @@
-<p>post-management works!</p>
+<div class="post-management-container">
+  <h2>Post Management</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <!-- Post Form - Only shown when editing -->
+  <div class="form-container" *ngIf="editingPostId">
+    <h3>Edit Post</h3>
+    <form [formGroup]="postForm" (ngSubmit)="savePost()">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" formControlName="title">
+        <div *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched">
+          <span class="error">Title is required</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea id="content" formControlName="content" rows="5"></textarea>
+        <div *ngIf="postForm.get('content')?.invalid && postForm.get('content')?.touched">
+          <span class="error">Content is required</span>
+        </div>
+      </div>
+
+      <div class="form-group checkbox">
+        <input type="checkbox" id="isPublic" formControlName="isPublic">
+        <label for="isPublic">Public Post</label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="postForm.invalid || saving">Update</button>
+        <button type="button" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Message when not editing -->
+  <div class="admin-instructions" *ngIf="!editingPostId">
+    <p>Los administradores no pueden crear posts, selecciona uno para editarlo.</p>
+  </div>
+
+  <!-- Posts List -->
+  <div class="post-list" *ngIf="!loading">
+    <h3>Posts</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Public</th>
+        <th>User ID</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let post of posts">
+        <td>{{ post.id }}</td>
+        <td>{{ post.title }}</td>
+        <td>{{ post.isPublic ? 'Yes' : 'No' }}</td>
+        <td>{{ post.userId }}</td>
+        <td>
+          <button (click)="editPost(post)">Edit</button>
+          <button (click)="deletePost(post.id)" class="delete-btn">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="posts && posts.length === 0">
+        <td colspan="5" class="no-data">No posts found</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

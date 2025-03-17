@@ -1,0 +1,25 @@
+<div class="app-container">
+  <header>
+    <div class="logo">My App</div>
+    <nav>
+      <ul>
+        <li><a routerLink="/public">Home</a></li>
+        <ng-container *ngIf="!authService.isAuthenticated()">
+          <li><a routerLink="/auth/login">Login</a></li>
+          <li><a routerLink="/auth/register">Register</a></li>
+        </ng-container>
+        <ng-container *ngIf="authService.isAuthenticated()">
+          <li *ngIf="authService.isAdmin()"><a routerLink="/admin">Admin Panel</a></li>
+          <li *ngIf="!authService.isAdmin()"><a routerLink="/user">User Dashboard</a></li>
+          <li><a href="#" (click)="logout($event)">Logout</a></li>
+        </ng-container>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+  <footer>
+    <p>&copy; 2024 My App</p>
+  </footer>
+</div>

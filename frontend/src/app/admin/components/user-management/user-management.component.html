@@ -1,1 +1,74 @@
-<p>user-management works!</p>
+<div class="user-management-container">
+  <h2>User Management</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+
+  <!-- User Form -->
+  <div class="form-container">
+    <h3>{{ editingUserId ? 'Edit User' : 'Create New User' }}</h3>
+    <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" formControlName="username">
+        <div *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched">
+          <span class="error">El nombre de usuario es requerido</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password {{ editingUserId ? '(leave blank to keep current)' : '' }}</label>
+        <input type="password" id="password" formControlName="password">
+        <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched && !editingUserId">
+          <span class="error">La contraseña es requerida</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" formControlName="role">
+          <option value="USER">User</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="userForm.invalid || saving">
+          {{ editingUserId ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" *ngIf="editingUserId" (click)="cancelEdit()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- User List -->
+  <div class="user-list" *ngIf="!loading">
+    <h3>Users</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          <button (click)="editUser(user)">Editar</button>
+          <button (click)="deleteUser(user.id)" class="delete-btn">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="users.length === 0">
+        <td colspan="4" class="no-data">No users found</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

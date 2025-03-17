@@ -1,1 +1,27 @@
-<p>post-list works!</p>
+<div class="post-list-container">
+  <h2>Public Posts</h2>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="posts-grid" *ngIf="!loading && !error">
+    <div *ngFor="let post of displayedPosts" class="post-card">
+      <h3>{{ post.title }}</h3>
+      <p>{{ post.content | slice:0:100 }}{{ post.content.length > 100 ? '...' : '' }}</p>
+      <a [routerLink]="['/public/post', post.id]" class="read-more">Leer más</a>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button
+      [disabled]="currentPage === 1"
+      (click)="changePage(currentPage - 1)">
+      Previous
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="changePage(currentPage + 1)">
+      Next
+    </button>
+  </div>
+</div>

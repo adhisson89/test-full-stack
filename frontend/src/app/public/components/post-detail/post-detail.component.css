@@ -1,0 +1,41 @@
+.post-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.back-button {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  padding: 0;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.post-content {
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+h1 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.content {
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.loading, .error {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.error {
+  color: red;
+}

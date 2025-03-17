@@ -1,0 +1,23 @@
+.profile-container {
+  padding: 20px;
+}
+
+.profile-info {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.info-item {
+  margin-bottom: 10px;
+}
+
+.loading, .error {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.error {
+  color: red;
+}
