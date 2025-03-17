@@ -25,7 +25,7 @@ interface Post {
         <div *ngFor="let post of displayedPosts" class="post-card">
           <h3>{{ post.title }}</h3>
           <p>{{ post.content | slice:0:100 }}{{ post.content.length > 100 ? '...' : '' }}</p>
-          <a [routerLink]="['/public/post', post.id]" class="read-more">Read more</a>
+          <a [routerLink]="['/public/post', post.id]" class="read-more">Leer más</a>
         </div>
       </div>
 
@@ -104,10 +104,9 @@ export class PostListComponent implements OnInit {
   loading = true;
   error = '';
 
-  // Client-side pagination variables
   currentPage = 1;
   totalPages = 1;
-  postsPerPage = 10;
+  postsPerPage = 4;
 
   private readonly GET_PUBLIC_POSTS = gql`
     query GetPublicPosts {

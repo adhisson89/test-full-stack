@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
-import { Apollo, APOLLO_OPTIONS } from 'apollo-angular';
-import { HttpLink } from 'apollo-angular/http';
-import { HttpClientModule } from '@angular/common/http';
-import { ApolloLink, InMemoryCache } from '@apollo/client/core';
-import { setContext } from '@apollo/client/link/context';
+import {NgModule} from '@angular/core';
+import {Apollo, APOLLO_OPTIONS} from 'apollo-angular';
+import {HttpLink} from 'apollo-angular/http';
+import {HttpClientModule} from '@angular/common/http';
+import {ApolloLink, InMemoryCache} from '@apollo/client/core';
+import {setContext} from '@apollo/client/link/context';
 
 @NgModule({
   imports: [HttpClientModule],
@@ -34,7 +34,7 @@ import { setContext } from '@apollo/client/link/context';
         const link = ApolloLink.from([
           basic,
           auth,
-          httpLink.create({ uri: 'http://localhost:3000/graphql' })
+          httpLink.create({uri: 'http://localhost:3000/graphql'})
         ]);
 
         return {
@@ -46,4 +46,5 @@ import { setContext } from '@apollo/client/link/context';
     }
   ]
 })
-export class GraphQLModule {}
+export class GraphQLModule {
+}

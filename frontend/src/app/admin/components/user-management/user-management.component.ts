@@ -20,6 +20,8 @@ interface User {
 
       <div *ngIf="loading" class="loading">Loading...</div>
       <div *ngIf="error" class="error">{{ error }}</div>
+      <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
 
       <!-- User Form -->
       <div class="form-container">
@@ -29,7 +31,7 @@ interface User {
             <label for="username">Username</label>
             <input type="text" id="username" formControlName="username">
             <div *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched">
-              <span class="error">Username is required</span>
+              <span class="error">El nombre de usuario es requerido</span>
             </div>
           </div>
 
@@ -37,7 +39,7 @@ interface User {
             <label for="password">Password {{ editingUserId ? '(leave blank to keep current)' : '' }}</label>
             <input type="password" id="password" formControlName="password">
             <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched && !editingUserId">
-              <span class="error">Password is required</span>
+              <span class="error">La contraseña es requerida</span>
             </div>
           </div>
 
@@ -53,7 +55,7 @@ interface User {
             <button type="submit" [disabled]="userForm.invalid || saving">
               {{ editingUserId ? 'Update' : 'Create' }}
             </button>
-            <button type="button" *ngIf="editingUserId" (click)="cancelEdit()">Cancel</button>
+            <button type="button" *ngIf="editingUserId" (click)="cancelEdit()">Cancelar</button>
           </div>
         </form>
       </div>
@@ -66,8 +68,8 @@ interface User {
             <tr>
               <th>ID</th>
               <th>Username</th>
-              <th>Role</th>
-              <th>Actions</th>
+              <th>Rol</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -76,8 +78,8 @@ interface User {
               <td>{{ user.username }}</td>
               <td>{{ user.role }}</td>
               <td>
-                <button (click)="editUser(user)">Edit</button>
-                <button (click)="deleteUser(user.id)" class="delete-btn">Delete</button>
+                <button (click)="editUser(user)">Editar</button>
+                <button (click)="deleteUser(user.id)" class="delete-btn">Eliminar</button>
               </td>
             </tr>
             <tr *ngIf="users.length === 0">
@@ -88,7 +90,96 @@ interface User {
       </div>
     </div>
   `,
-  styles: [/* styles remain unchanged */]
+  styles: [`
+    .user-management-container {
+      padding: 20px;
+    }
+
+    .form-container {
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #cccccc;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f5f5f5;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading, .error {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+      border-radius: 4px;
+    }
+
+  `]
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
@@ -97,6 +188,7 @@ export class UserManagementComponent implements OnInit {
   saving = false;
   error = '';
   editingUserId: string | null = null;
+  successMessage = '';
 
   private readonly GET_USERS = gql`
     query GetAllUsers {
@@ -200,11 +292,13 @@ export class UserManagementComponent implements OnInit {
       refetchQueries: [{ query: this.GET_USERS }]
     }).subscribe({
       next: () => {
+        this.showSuccessMessage("Usuario creado correctamente")
         this.resetForm();
         this.saving = false;
+        this.loadUsers();
       },
       error: (err) => {
-        this.error = err.message || 'Error creating user';
+        this.error = err.message || 'Error al crear el usuario';
         this.saving = false;
       }
     });
@@ -224,18 +318,20 @@ export class UserManagementComponent implements OnInit {
       refetchQueries: [{ query: this.GET_USERS }]
     }).subscribe({
       next: () => {
+        this.showSuccessMessage("Usuario actualizado correctamente")
         this.resetForm();
         this.saving = false;
+        this.loadUsers();
       },
       error: (err) => {
-        this.error = err.message || 'Error updating user';
+        this.error = err.message || 'Error al actualizar el usuario';
         this.saving = false;
       }
     });
   }
 
   deleteUser(id: string): void {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm('Estás seguro que quieres eliminar al usuario?')) return;
 
     this.apollo.mutate<{deleteUserById: string}>({
       mutation: this.DELETE_USER,
@@ -243,10 +339,11 @@ export class UserManagementComponent implements OnInit {
       refetchQueries: [{ query: this.GET_USERS }]
     }).subscribe({
       next: () => {
-        // Success message if needed
+        this.showSuccessMessage("Usuario eliminado correctamente");
+        this.loadUsers();
       },
       error: (err) => {
-        this.error = err.message || 'Error deleting user';
+        this.error = err.message || 'Error al eliminar al usuario';
       }
     });
   }
@@ -277,5 +374,12 @@ export class UserManagementComponent implements OnInit {
     this.userForm.get('password')?.updateValueAndValidity();
 
     this.error = '';
+  }
+
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 3000);
   }
 }

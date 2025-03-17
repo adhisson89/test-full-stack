@@ -7,183 +7,195 @@ import {PostRequest} from '../../../interface/requests/PostRequest';
 
 
 @Component({
-    selector: 'app-user-post-management',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
-    template: `
-        <div class="post-management-container">
-            <h2>My Posts</h2>
+  selector: 'app-user-post-management',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
+    <div class="post-management-container">
+      <h2>My Posts</h2>
 
-            <div *ngIf="loading" class="loading">Loading...</div>
-            <div *ngIf="error" class="error">{{ error }}</div>
+      <div *ngIf="loading" class="loading">Loading...</div>
+      <div *ngIf="error" class="error">{{ error }}</div>
+      <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
 
-            <!-- Post Form -->
-            <div class="form-container">
-                <h3>{{ editingPostId ? 'Edit Post' : 'Create New Post' }}</h3>
-                <form [formGroup]="postForm" (ngSubmit)="savePost()">
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" id="title" formControlName="title">
-                        <div *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched">
-                            <span class="error">Title is required</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="content">Content</label>
-                        <textarea id="content" formControlName="content" rows="10"></textarea>
-                        <div *ngIf="postForm.get('content')?.invalid && postForm.get('content')?.touched">
-                            <span class="error">Content is required</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group checkbox">
-                        <input type="checkbox" id="isPublic" formControlName="isPublic">
-                        <label for="isPublic">Make this post public</label>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" [disabled]="postForm.invalid || saving">
-                            {{ editingPostId ? 'Update' : 'Create' }}
-                        </button>
-                        <button type="button" *ngIf="editingPostId" (click)="cancelEdit()">Cancel</button>
-                    </div>
-                </form>
+      <!-- Post Form -->
+      <div class="form-container">
+        <h3>{{ editingPostId ? 'Edit Post' : 'Create New Post' }}</h3>
+        <form [formGroup]="postForm" (ngSubmit)="savePost()">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" formControlName="title">
+            <div *ngIf="postForm.get('title')?.invalid && postForm.get('title')?.touched">
+              <span class="error">Title is required</span>
             </div>
+          </div>
 
-            <!-- Posts List -->
-            <div class="post-list" *ngIf="!loading">
-                <h3>Your Posts</h3>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let post of posts">
-                        <td>{{ post.id }}</td>
-                        <td>{{ post.title }}</td>
-                        <td>{{ post.isPublic ? 'Public' : 'Private' }}</td>
-                        <td>
-                            <button (click)="editPost(post)">Edit</button>
-                            <button (click)="deletePost(post.id)" class="delete-btn">Delete</button>
-                        </td>
-                    </tr>
-                    <tr *ngIf="posts.length === 0">
-                        <td colspan="4" class="no-data">No posts found</td>
-                    </tr>
-                    </tbody>
-                </table>
+          <div class="form-group">
+            <label for="content">Content</label>
+            <textarea id="content" formControlName="content" rows="10"></textarea>
+            <div *ngIf="postForm.get('content')?.invalid && postForm.get('content')?.touched">
+              <span class="error">Content is required</span>
             </div>
-        </div>
-    `,
-    styles: [`
-        .post-management-container {
-            padding: 20px;
-        }
+          </div>
 
-        .form-container {
-            margin-bottom: 30px;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 5px;
-        }
+          <div class="form-group checkbox">
+            <input type="checkbox" id="isPublic" formControlName="isPublic">
+            <label for="isPublic">Make this post public</label>
+          </div>
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+          <div class="form-actions">
+            <button type="submit" [disabled]="postForm.invalid || saving">
+              {{ editingPostId ? 'Update' : 'Create' }}
+            </button>
+            <button type="button" *ngIf="editingPostId" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
 
-        .checkbox {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+      <!-- Posts List -->
+      <div class="post-list" *ngIf="!loading">
+        <h3>Your Posts</h3>
+        <table>
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let post of posts">
+            <td>{{ post.id }}</td>
+            <td>{{ post.title }}</td>
+            <td>{{ post.isPublic ? 'Public' : 'Private' }}</td>
+            <td>
+              <button (click)="editPost(post)">Edit</button>
+              <button (click)="deletePost(post.id)" class="delete-btn">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="posts.length === 0">
+            <td colspan="4" class="no-data">No posts found</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .post-management-container {
+      padding: 20px;
+    }
 
-        .checkbox input {
-            width: auto;
-        }
+    .form-container {
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
+    .form-group {
+      margin-bottom: 15px;
+    }
 
-        .checkbox label {
-            margin-bottom: 0;
-        }
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-        }
+    .checkbox input {
+      width: auto;
+    }
 
-        .form-actions {
-            display: flex;
-            gap: 10px;
-        }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
 
-        button {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
+    .checkbox label {
+      margin-bottom: 0;
+    }
 
-        button:disabled {
-            background-color: #cccccc;
-        }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
 
-        .delete-btn {
-            background-color: #dc3545;
-        }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+    button:disabled {
+      background-color: #cccccc;
+    }
 
-        th {
-            background-color: #f5f5f5;
-        }
+    .delete-btn {
+      background-color: #dc3545;
+    }
 
-        .no-data {
-            text-align: center;
-            padding: 20px;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-        .loading, .error {
-            text-align: center;
-            margin: 20px 0;
-        }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
 
-        .error {
-            color: red;
-        }
-    `]
+    th {
+      background-color: #f5f5f5;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading, .error {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+      border-radius: 4px;
+    }
+  `]
 })
 export class UserPostManagementComponent implements OnInit {
-    posts: PostRequest[] = [];
-    postForm: FormGroup;
-    loading = true;
-    saving = false;
-    error = '';
-    editingPostId: string | null = null;
-    currentUserId: string | null = null;
+  posts: PostRequest[] = [];
+  postForm: FormGroup;
+  loading = true;
+  saving = false;
+  error = '';
+  editingPostId: string | null = null;
+  currentUserId: string | null = null;
+  successMessage = '';
 
-    private readonly GET_USER_POSTS = gql`
+  private readonly GET_USER_POSTS = gql`
       query GetMyPosts {
         myPosts {
           id
@@ -195,7 +207,7 @@ export class UserPostManagementComponent implements OnInit {
       }
     `;
 
-    private readonly CREATE_POST = gql`
+  private readonly CREATE_POST = gql`
     mutation CreatePost($title: String!, $content: String!, $public: Boolean!, $userId: ID) {
       createPost(postRequest: {
         title: $title,
@@ -212,172 +224,184 @@ export class UserPostManagementComponent implements OnInit {
     }
   `;
 
-    private readonly UPDATE_POST = gql`
-    mutation UpdatePost($id: ID!, $title: String!, $content: String!, $public: Boolean!, $userId: ID) {
+  private readonly UPDATE_POST = gql`
+    mutation UpdatePost($id: ID!, $title: String!, $content: String!, $public: Boolean!) {
       updatePostById(postRequest: {
         id: $id,
         title: $title,
         content: $content,
         public: $public,
-        userId: $userId
       }) {
         id
         title
         content
         isPublic
-        userId
       }
     }
     `;
 
-    private readonly DELETE_POST = gql`
+  private readonly DELETE_POST = gql`
     mutation DeletePost($id: ID!) {
       deletePostById(id: $id)
     }
   `;
 
-    constructor(
-        private apollo: Apollo,
-        private fb: FormBuilder,
-        private authService: AuthService
-    ) {
-        this.postForm = this.fb.group({
-            title: ['', Validators.required],
-            content: ['', Validators.required],
-            isPublic: [false]
-        });
+  constructor(
+    private apollo: Apollo,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
+    this.postForm = this.fb.group({
+      title: ['', Validators.required],
+      content: ['', Validators.required],
+      isPublic: [false]
+    });
 
-        // Get current user ID
-        const currentUser = this.authService.getCurrentUser();
-        if (currentUser && currentUser.id) {
-            this.currentUserId = currentUser.id;
-        }
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && currentUser.id) {
+      this.currentUserId = currentUser.id;
     }
+  }
 
-    ngOnInit(): void {
-        if (this.currentUserId) {
-            this.loadUserPosts();
-        } else {
-            this.error = 'User ID not available';
-            this.loading = false;
-        }
+  ngOnInit(): void {
+    if (this.currentUserId) {
+      this.loadUserPosts();
+    } else {
+      this.error = 'User ID not available';
+      this.loading = false;
     }
+  }
 
-    loadUserPosts(): void {
-      this.loading = true;
-      this.apollo.query<{myPosts: PostRequest[]}>({
+  loadUserPosts(): void {
+    this.loading = true;
+    this.apollo.query<{ myPosts: PostRequest[] }>({
+      query: this.GET_USER_POSTS,
+      fetchPolicy: 'network-only'
+    }).subscribe({
+      next: (result) => {
+        this.posts = result.data.myPosts;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err.message || 'Error loading posts';
+        this.loading = false;
+      }
+    });
+  }
+
+  savePost(): void {
+    if (this.postForm.invalid) return;
+
+    this.saving = true;
+
+    if (this.editingPostId) {
+      this.updatePost();
+    } else {
+      this.createPost();
+    }
+  }
+
+  createPost(): void {
+    const {title, content, isPublic} = this.postForm.value;
+
+    this.apollo.mutate<{ createPost: PostRequest }>({
+      mutation: this.CREATE_POST,
+      variables: {
+        title,
+        content,
+        public: isPublic,
+        userId: this.currentUserId
+      },
+      refetchQueries: [{
         query: this.GET_USER_POSTS,
-        fetchPolicy: 'network-only'
-      }).subscribe({
-        next: (result) => {
-          this.posts = result.data.myPosts;
-          this.loading = false;
-        },
-        error: (err) => {
-          this.error = err.message || 'Error loading posts';
-          this.loading = false;
-        }
-      });
-    }
-
-    savePost(): void {
-        if (this.postForm.invalid) return;
-
-        this.saving = true;
-
-        if (this.editingPostId) {
-            this.updatePost();
-        } else {
-            this.createPost();
-        }
-    }
-
-    createPost(): void {
-        const {title, content, isPublic} = this.postForm.value;
-
-        this.apollo.mutate<{ createPost: PostRequest }>({
-            mutation: this.CREATE_POST,
-            variables: {
-                title,
-                content,
-                public: isPublic,
-                userId: this.currentUserId
-            },
-            refetchQueries: [{
-                query: this.GET_USER_POSTS,
-            }]
-        }).subscribe({
-            next: () => {
-                this.resetForm();
-                this.saving = false;
-            },
-            error: (err) => {
-                this.error = err.message || 'Error creating post';
-                this.saving = false;
-            }
-        });
-    }
-
-    updatePost(): void {
-        const {title, content, isPublic} = this.postForm.value;
-
-        this.apollo.mutate<{ updatePostById: PostRequest }>({
-            mutation: this.UPDATE_POST,
-            variables: {
-                id: this.editingPostId,
-                title,
-                content,
-                public: isPublic,
-                userId: this.currentUserId
-            },
-            refetchQueries: [{
-                query: this.GET_USER_POSTS,
-            }]
-        }).subscribe({
-            next: () => {
-                this.resetForm();
-                this.saving = false;
-            },
-            error: (err) => {
-                this.error = err.message || 'Error updating post';
-                this.saving = false;
-            }
-        });
-    }
-
-    deletePost(id: string): void {
-        if (!confirm('Are you sure you want to delete this post?')) return;
-
-        this.apollo.mutate<{ deletePostById: string }>({
-            mutation: this.DELETE_POST,
-            variables: {id},
-            refetchQueries: [{
-                query: this.GET_USER_POSTS,
-            }]
-        }).subscribe({
-            error: (err) => {
-                this.error = err.message || 'Error deleting post';
-            }
-        });
-    }
-
-    editPost(post: PostRequest): void {
-        this.editingPostId = post.id;
-
-        this.postForm.patchValue({
-            title: post.title,
-            content: post.content,
-            isPublic: post.isPublic
-        });
-    }
-
-    cancelEdit(): void {
+      }]
+    }).subscribe({
+      next: () => {
+        this.showSuccessMessage('Post created successfully!');
         this.resetForm();
-    }
+        this.saving = false;
+        this.loadUserPosts();
+      },
+      error: (err) => {
+        this.error = err.message || 'Error creating post';
+        this.saving = false;
+      }
+    });
+  }
 
-    resetForm(): void {
-        this.editingPostId = null;
-        this.postForm.reset({isPublic: false});
-        this.error = '';
-    }
+  updatePost(): void {
+    const {title, content, isPublic} = this.postForm.value;
+
+    this.apollo.mutate<{ updatePostById: PostRequest }>({
+      mutation: this.UPDATE_POST,
+      variables: {
+        id: this.editingPostId,
+        title,
+        content,
+        public: isPublic,
+      },
+      refetchQueries: [{
+        query: this.GET_USER_POSTS,
+      }]
+    }).subscribe({
+      next: () => {
+        this.showSuccessMessage('Post updated successfully!');
+        this.resetForm();
+        this.saving = false;
+        this.loadUserPosts();
+      },
+      error: (err) => {
+        this.error = err.message || 'Error updating post';
+        this.saving = false;
+      }
+    });
+  }
+
+  deletePost(id: string): void {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+
+    this.apollo.mutate<{ deletePostById: string }>({
+      mutation: this.DELETE_POST,
+      variables: {id},
+      refetchQueries: [{
+        query: this.GET_USER_POSTS,
+      }]
+    }).subscribe({
+      next: () => {
+        this.showSuccessMessage('Post deleted successfully!');
+        this.loadUserPosts();
+      },
+      error: (err) => {
+        this.error = err.message || 'Error deleting post';
+      }
+    });
+  }
+
+  editPost(post: PostRequest): void {
+    this.editingPostId = post.id;
+
+    this.postForm.patchValue({
+      title: post.title,
+      content: post.content,
+      isPublic: post.isPublic
+    });
+  }
+
+  cancelEdit(): void {
+    this.resetForm();
+  }
+
+  resetForm(): void {
+    this.editingPostId = null;
+    this.postForm.reset({isPublic: false});
+    this.error = '';
+  }
+
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 3000);
+  }
+
 }

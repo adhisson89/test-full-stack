@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
   template: `
     <div class="register-container">
       <h2>Register</h2>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="username">Username</label>
@@ -73,12 +74,20 @@ import { AuthService } from '../../services/auth.service';
     button:disabled {
       background-color: #cccccc;
     }
+    .success-message {
+      color: green;
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #e8f5e9;
+      border-radius: 4px;
+    }
   `]
 })
 export class RegisterComponent {
   registerForm: FormGroup;
   loading = false;
   error = '';
+  successMessage = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -113,7 +122,12 @@ export class RegisterComponent {
 
     this.authService.register(userRequest).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        this.loading = false;
+        this.successMessage = 'Registration successful! Redirecting to login...';
+
+        setTimeout(() => {
+          this.router.navigate(['/auth/login']);
+        }, 2000);
       },
       error: (error) => {
         this.error = error.message || 'Registration failed';
