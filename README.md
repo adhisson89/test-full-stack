@@ -24,7 +24,7 @@ El proyecto está estructurado de la siguiente manera:
 
 ```bash
 
-git clone [url-del-repositorio]
+git clone git@github.com:adhisson89/test-full-stack.git
 cd test-full-stack
 
 ```
