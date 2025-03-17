@@ -19,12 +19,12 @@ public class JwtTokenUtil {
     @Value("${jwt.secret:defaultSecretKeyWhichShouldBeAtLeast32CharactersLong}")
     private String secret;
 
-    //    @Value("${jwt.expiration:86400000}")
-    @Value("${jwt.expiration:60000}")
+    @Value("${jwt.expiration:86400000}")
+//    @Value("${jwt.expiration:60000}")
     private Long expiration;
 
-    //    @Value("${jwt.refreshExpiration:604800000}")
-    @Value("${jwt.refreshExpiration:300000}")
+    @Value("${jwt.refreshExpiration:604800000}")
+//    @Value("${jwt.refreshExpiration:300000}")
     private Long refreshExpiration;
 
     public String generateToken(UserDetails userDetails) {

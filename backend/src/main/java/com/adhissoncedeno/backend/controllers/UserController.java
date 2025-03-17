@@ -3,6 +3,7 @@ package com.adhissoncedeno.backend.controllers;
 import com.adhissoncedeno.backend.model.dtos.request.UserRequestDTO;
 import com.adhissoncedeno.backend.model.dtos.response.UserResponseDTO;
 import com.adhissoncedeno.backend.model.entities.User;
+import com.adhissoncedeno.backend.model.enums.Role;
 import com.adhissoncedeno.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -31,9 +32,11 @@ public class UserController {
         return userService.findAll();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @MutationMapping(name = "createUser")
     public UserResponseDTO createUser(@Argument(name = "userRequest") UserRequestDTO userRequest) {
+        if (userRequest.getRole() == null) {
+            userRequest.setRole(Role.USER);
+        }
         return userService.create(userRequest);
     }
 

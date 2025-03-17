@@ -4,6 +4,7 @@ type Query {
     findUserById(id: ID!): UserResponse
     findAllUsers: [UserResponse]
     myPosts: [PostResponse]
+    findPostById(id: ID!): PostResponse
 }
 
 type Mutation {

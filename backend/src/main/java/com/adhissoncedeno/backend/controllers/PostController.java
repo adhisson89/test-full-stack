@@ -31,12 +31,17 @@ public class PostController {
         return postService.findByUserId(userId);
     }
 
+    @QueryMapping(name = "findPostById")
+    public PostResponseDTO findById(@Argument(name = "id") Long id) {
+        return postService.findById(id);
+    }
+
     @QueryMapping(name = "findAllPosts")
     public List<PostResponseDTO> findAll() {
         return postService.findAll();
     }
 
-    @PreAuthorize("hasRole('USER')")
+   @PreAuthorize("hasRole('USER')")
     @MutationMapping(name = "createPost")
     public PostResponseDTO createPost(@Argument PostRequestDTO postRequest) {
         return postService.save(postRequest);
@@ -53,7 +58,6 @@ public class PostController {
         return postService.update(postRequest);
     }
 
-    //findPublicPosts
     @QueryMapping(name = "findPublicPosts")
     public List<PostResponseDTO> findPublicPosts() {
         return postService.findPublicPosts();

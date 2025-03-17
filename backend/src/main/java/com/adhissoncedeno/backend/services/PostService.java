@@ -7,6 +7,7 @@ import com.adhissoncedeno.backend.model.dtos.response.PostResponseDTO;
 import com.adhissoncedeno.backend.model.entities.Post;
 import com.adhissoncedeno.backend.model.entities.User;
 import com.adhissoncedeno.backend.repositories.PostRepository;
+import com.adhissoncedeno.backend.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -98,6 +99,9 @@ public class PostService {
     }
 
     private Long getUserIdFromAuthentication(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            return ((CustomUserDetails) authentication.getPrincipal()).getId();
+        }
         return Long.parseLong(authentication.getName());
     }
 
