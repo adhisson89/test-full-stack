@@ -36,12 +36,13 @@ public class PostController {
         return postService.findById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @QueryMapping(name = "findAllPosts")
     public List<PostResponseDTO> findAll() {
         return postService.findAll();
     }
 
-   @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @MutationMapping(name = "createPost")
     public PostResponseDTO createPost(@Argument PostRequestDTO postRequest) {
         return postService.save(postRequest);

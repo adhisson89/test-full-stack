@@ -46,19 +46,44 @@ public class PostService {
     }
 
     public PostResponseDTO findById(Long id) {
-        return postRepository.findById(id)
-                .map(postMapper::toDto)
-                .orElse(null);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (post.isPublic()) {
+            return postMapper.toDto(post);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() ||
+                "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new AccessDeniedException("This post is private");
+        }
+
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        boolean isOwner = post.getUser().getId().equals(getUserIdFromAuthentication(authentication));
+
+        if (isAdmin || isOwner) {
+            return postMapper.toDto(post);
+        } else {
+            throw new AccessDeniedException("You don't have permission to view this post");
+        }
     }
 
     public PostResponseDTO save(PostRequestDTO postRequestDTO) {
         Post post = postMapper.toEntity(postRequestDTO);
 
-        if (postRequestDTO.getUserId() != null) {
-            User user = userService.findById(postRequestDTO.getUserId());
-            if (user != null) {
-                post.setUser(user);
-            }
+        Long userId = postRequestDTO.getUserId();
+        if (userId == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = getUserIdFromAuthentication(authentication);
+        }
+
+        User user = userService.findById(userId);
+        if (user != null) {
+            post.setUser(user);
+        } else {
+            throw new RuntimeException("User not found");
         }
 
         return postMapper.toDto(postRepository.save(post));
@@ -104,7 +129,6 @@ public class PostService {
         }
         return Long.parseLong(authentication.getName());
     }
-
 
 
 }
